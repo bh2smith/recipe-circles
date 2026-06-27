@@ -3,6 +3,10 @@ import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { comments, recipes, unlocks, users } from "@/db/schema";
 
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const isUuid = (s: string) => UUID_RE.test(s);
+
 export interface RecipeDTO {
   id: string;
   authorAddress: string;
@@ -137,6 +141,7 @@ export async function getRecipe(
   id: string,
   viewer: string | null,
 ): Promise<RecipeDTO | null> {
+  if (!isUuid(id)) return null;
   const [row] = (await db
     .select(recipeSelect)
     .from(recipes)
@@ -154,6 +159,7 @@ export async function getRecipe(
 
 /** Raw recipe row (server-internal; includes author + price for verification). */
 export async function getRecipeRaw(id: string) {
+  if (!isUuid(id)) return null;
   const [row] = await db.select().from(recipes).where(eq(recipes.id, id)).limit(1);
   return row ?? null;
 }
@@ -215,6 +221,7 @@ export async function createRecipe(input: {
 }
 
 export async function listComments(recipeId: string): Promise<CommentDTO[]> {
+  if (!isUuid(recipeId)) return [];
   const rows = await db
     .select({
       id: comments.id,

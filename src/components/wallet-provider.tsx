@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useRouter } from "next/navigation";
 import { getAddress } from "viem";
 import {
   CirclesConnector,
@@ -43,6 +44,7 @@ export function useWallet(): WalletState {
 }
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const frameRef = useRef<HTMLIFrameElement>(null);
   const connectorRef = useRef<CirclesConnector | null>(null);
   if (!connectorRef.current) connectorRef.current = new CirclesConnector();
@@ -92,11 +94,12 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       if (!res.ok) throw new Error("Sign-in verification failed");
       const data = await res.json();
       setSession(data.address);
+      router.refresh();
       return data.address;
     } finally {
       signingIn.current = false;
     }
-  }, [connector]);
+  }, [connector, router]);
 
   // Wire the connector to the iframe and react to state changes.
   useEffect(() => {
@@ -130,7 +133,8 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     setSession(null);
     setProfile(null);
     await fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
-  }, [connector]);
+    router.refresh();
+  }, [connector, router]);
 
   const value: WalletState = {
     address,
