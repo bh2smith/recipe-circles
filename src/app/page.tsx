@@ -16,11 +16,11 @@ export default async function HomePage() {
     <div className="mx-auto max-w-3xl px-4 py-8">
       <section className="mb-8">
         <h1 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
-          A community cookbook on Circles
+          Cook it. Share it. Get paid for it.
         </h1>
         <p className="mt-2 max-w-prose text-muted-foreground">
-          Share what you cook, talk recipes in the comments, and let chefs charge
-          a little gCRC to unlock their best dishes.
+          A community cookbook on Circles. Share what you cook, talk recipes in
+          the comments, and charge a little gCRC to unlock your best dishes.
         </p>
       </section>
 

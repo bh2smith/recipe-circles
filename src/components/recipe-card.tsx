@@ -26,9 +26,12 @@ export function RecipeCard({ recipe }: { recipe: RecipeDTO }) {
               Free
             </Badge>
           ) : (
-            <Badge className="shrink-0 gap-1">
+            <Badge className="shrink-0 gap-1 border-transparent bg-salmon text-salmon-foreground">
               {recipe.locked ? <Lock className="size-3" /> : null}
-              {formatCrc(recipe.priceAtto)} gCRC
+              <span className="font-mono tabular-nums">
+                {formatCrc(recipe.priceAtto)}
+              </span>{" "}
+              gCRC
             </Badge>
           )}
         </div>

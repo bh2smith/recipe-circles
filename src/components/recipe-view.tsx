@@ -121,9 +121,12 @@ export function RecipeView({ recipe }: { recipe: RecipeDTO }) {
               Free
             </Badge>
           ) : (
-            <Badge className="shrink-0 gap-1">
+            <Badge className="shrink-0 gap-1 border-transparent bg-salmon text-salmon-foreground">
               {recipe.locked ? <Lock className="size-3" /> : null}
-              {formatCrc(recipe.priceAtto)} gCRC
+              <span className="font-mono tabular-nums">
+                {formatCrc(recipe.priceAtto)}
+              </span>{" "}
+              gCRC
             </Badge>
           )}
         </div>
@@ -172,7 +175,7 @@ export function RecipeView({ recipe }: { recipe: RecipeDTO }) {
             <p className="text-muted-foreground">{recipe.teaser}</p>
           ) : null}
           <Card className="items-center gap-4 border-primary/30 bg-accent/40 p-8 text-center">
-            <span className="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <span className="flex size-12 items-center justify-center rounded-full bg-salmon/10 text-salmon">
               <Lock className="size-6" />
             </span>
             <div>
@@ -180,13 +183,16 @@ export function RecipeView({ recipe }: { recipe: RecipeDTO }) {
                 Unlock this recipe
               </p>
               <p className="text-sm text-muted-foreground">
-                Pay {formatCrc(recipe.priceAtto)} gCRC to {authorLabel} to read
-                the full recipe.
+                Pay{" "}
+                <span className="font-mono tabular-nums text-foreground">
+                  {formatCrc(recipe.priceAtto)} gCRC
+                </span>{" "}
+                to {authorLabel} to read the full recipe.
               </p>
             </div>
             <Button
               size="lg"
-              className="rounded-full"
+              className="rounded-full bg-salmon text-salmon-foreground hover:bg-salmon/90"
               onClick={handleUnlock}
               disabled={unlocking}
             >
@@ -195,7 +201,12 @@ export function RecipeView({ recipe }: { recipe: RecipeDTO }) {
                   <Loader2 className="mr-1 size-4 animate-spin" /> Working…
                 </>
               ) : (
-                <>Unlock for {formatCrc(recipe.priceAtto)} gCRC</>
+                <>
+                  Unlock for{" "}
+                  <span className="font-mono tabular-nums">
+                    {formatCrc(recipe.priceAtto)} gCRC
+                  </span>
+                </>
               )}
             </Button>
           </Card>

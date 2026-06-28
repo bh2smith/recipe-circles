@@ -1,14 +1,20 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Fraunces } from "next/font/google";
+import { DM_Sans, DM_Mono } from "next/font/google";
 import "./globals.css";
 import { WalletProvider } from "@/components/wallet-provider";
 import { Header } from "@/components/header";
 import { Toaster } from "@/components/ui/sonner";
 import { APP_NAME } from "@/lib/config";
 
-const sans = Geist({ variable: "--font-sans", subsets: ["latin"] });
-const mono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
-const heading = Fraunces({ variable: "--font-heading", subsets: ["latin"] });
+// DM Sans carries both body and headings (hierarchy via weight + tracking),
+// matching the Circles brand; DM Mono is reserved for addresses and gCRC amounts.
+const sans = DM_Sans({ variable: "--font-sans", subsets: ["latin"] });
+const heading = DM_Sans({ variable: "--font-heading", subsets: ["latin"] });
+const mono = DM_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+});
 
 export const metadata: Metadata = {
   title: `${APP_NAME} — cook, share, unlock`,
