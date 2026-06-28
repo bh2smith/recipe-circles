@@ -25,7 +25,7 @@ Next.js 16 (App Router) · Postgres + Drizzle ORM · viem · shadcn/ui + Tailwin
 ## Local development
 
 ```bash
-pnpm install
+bun install
 
 # 1. Postgres (any instance works). Example with Docker:
 docker run -d --name circles-pg -e POSTGRES_PASSWORD=postgres \
@@ -35,8 +35,8 @@ docker run -d --name circles-pg -e POSTGRES_PASSWORD=postgres \
 cp .env.example .env.local   # then edit values (see below)
 
 # 3. Migrate + run
-pnpm drizzle-kit migrate
-pnpm dev                     # http://localhost:3000
+bun run db:migrate
+bun run dev                  # http://localhost:3000
 ```
 
 ### Environment variables
@@ -61,7 +61,7 @@ vercel link
 # Provision a database (Vercel Marketplace → Neon Postgres) — sets DATABASE_URL
 vercel env add SESSION_SECRET           # + the NEXT_PUBLIC_* and GNOSIS_RPC_URL vars
 vercel env pull .env.local
-pnpm drizzle-kit migrate                # against the Neon DATABASE_URL
+bun run db:migrate                      # against the Neon DATABASE_URL
 vercel deploy --prod
 ```
 
