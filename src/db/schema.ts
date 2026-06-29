@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
   pgTable,
   text,
@@ -29,6 +30,11 @@ export const recipes = pgTable(
     title: text("title").notNull(),
     body: text("body").notNull(),
     teaser: text("teaser"),
+    /** Free-form, lowercased tags for browsing (e.g. {vegan,dessert,30-min}). */
+    keywords: text("keywords")
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
     priceAtto: numeric("price_atto", { precision: 78, scale: 0 })
       .notNull()
       .default("0"),
@@ -42,6 +48,7 @@ export const recipes = pgTable(
   (t) => [
     index("recipes_author_idx").on(t.authorAddress),
     index("recipes_created_idx").on(t.createdAt),
+    index("recipes_keywords_idx").using("gin", t.keywords),
   ],
 );
 
