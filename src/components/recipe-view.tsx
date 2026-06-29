@@ -165,6 +165,21 @@ export function RecipeView({ recipe }: { recipe: RecipeDTO }) {
             </Button>
           ) : null}
         </div>
+
+        {recipe.keywords.length > 0 ? (
+          <div className="flex flex-wrap gap-1.5">
+            {recipe.keywords.map((kw) => (
+              <Badge
+                key={kw}
+                variant="secondary"
+                className="cursor-pointer font-normal"
+                render={<Link href={`/?keyword=${encodeURIComponent(kw)}`} />}
+              >
+                {kw}
+              </Badge>
+            ))}
+          </div>
+        ) : null}
       </header>
 
       {recipe.body !== null ? (

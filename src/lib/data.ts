@@ -1,5 +1,5 @@
 import "server-only";
-import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, arrayContains, desc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { comments, recipes, unlocks, users } from "@/db/schema";
 
@@ -15,6 +15,7 @@ export interface RecipeDTO {
   title: string;
   teaser: string | null;
   body: string | null; // null when locked for this viewer
+  keywords: string[];
   priceAtto: string;
   free: boolean;
   locked: boolean;
@@ -61,6 +62,7 @@ function toDTO(
     title: row.title,
     teaser: row.teaser,
     body: authorized ? row.body : null,
+    keywords: row.keywords,
     priceAtto: row.priceAtto,
     free,
     locked: !authorized,
@@ -77,6 +79,7 @@ const recipeSelect = {
   title: recipes.title,
   body: recipes.body,
   teaser: recipes.teaser,
+  keywords: recipes.keywords,
   priceAtto: recipes.priceAtto,
   createdAt: recipes.createdAt,
   updatedAt: recipes.updatedAt,
@@ -118,11 +121,16 @@ async function commentCounts(
   return map;
 }
 
-export async function listRecipes(viewer: string | null): Promise<RecipeDTO[]> {
+export async function listRecipes(
+  viewer: string | null,
+  opts: { keyword?: string } = {},
+): Promise<RecipeDTO[]> {
+  const keyword = opts.keyword?.trim().toLowerCase();
   const rows = (await db
     .select(recipeSelect)
     .from(recipes)
     .leftJoin(users, eq(recipes.authorAddress, users.address))
+    .where(keyword ? arrayContains(recipes.keywords, [keyword]) : undefined)
     .orderBy(desc(recipes.createdAt))
     .limit(100)) as RecipeRow[];
 
@@ -201,6 +209,7 @@ export async function createRecipe(input: {
   title: string;
   body: string;
   teaser: string | null;
+  keywords: string[];
   priceAtto: string;
 }): Promise<string> {
   await db
@@ -214,10 +223,25 @@ export async function createRecipe(input: {
       title: input.title,
       body: input.body,
       teaser: input.teaser,
+      keywords: input.keywords,
       priceAtto: input.priceAtto,
     })
     .returning({ id: recipes.id });
   return row.id;
+}
+
+/** Distinct keywords across all recipes, most-used first (for the browse bar). */
+export async function listAllKeywords(
+  limit = 40,
+): Promise<{ keyword: string; count: number }[]> {
+  const result = await db.execute<{ keyword: string; count: number }>(sql`
+    select kw as keyword, cast(count(*) as int) as count
+    from ${recipes}, unnest(${recipes.keywords}) as kw
+    group by kw
+    order by count(*) desc, kw asc
+    limit ${limit}
+  `);
+  return result.rows;
 }
 
 export async function listComments(recipeId: string): Promise<CommentDTO[]> {

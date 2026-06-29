@@ -40,6 +40,16 @@ export function RecipeCard({ recipe }: { recipe: RecipeDTO }) {
           <p className="line-clamp-2 text-sm text-muted-foreground">{preview}</p>
         ) : null}
 
+        {recipe.keywords.length > 0 ? (
+          <div className="flex flex-wrap gap-1">
+            {recipe.keywords.slice(0, 4).map((kw) => (
+              <Badge key={kw} variant="secondary" className="font-normal">
+                {kw}
+              </Badge>
+            ))}
+          </div>
+        ) : null}
+
         <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
           <span className="flex items-center gap-2">
             <Avatar className="size-5">
