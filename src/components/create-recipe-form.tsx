@@ -4,12 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useWallet } from "@/components/wallet-provider";
 import { GCRC_CONFIGURED } from "@/lib/config";
+import { MAX_KEYWORDS, normalizeKeywords } from "@/lib/keywords";
 
 export function CreateRecipeForm() {
   const router = useRouter();
@@ -17,10 +19,12 @@ export function CreateRecipeForm() {
   const [title, setTitle] = useState("");
   const [teaser, setTeaser] = useState("");
   const [body, setBody] = useState("");
+  const [keywords, setKeywords] = useState("");
   const [price, setPrice] = useState("0");
   const [submitting, setSubmitting] = useState(false);
 
   const paid = Number(price) > 0;
+  const parsedKeywords = normalizeKeywords(keywords);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -44,7 +48,13 @@ export function CreateRecipeForm() {
       const res = await fetch("/api/recipes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, teaser, body, price }),
+        body: JSON.stringify({
+          title,
+          teaser,
+          body,
+          keywords: parsedKeywords,
+          price,
+        }),
       });
       if (!res.ok) {
         const e = await res.json().catch(() => ({}));
@@ -102,6 +112,33 @@ export function CreateRecipeForm() {
           rows={14}
           required
         />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="keywords">
+          Keywords{" "}
+          <span className="font-normal text-muted-foreground">
+            (optional — comma-separated, for browsing)
+          </span>
+        </Label>
+        <Input
+          id="keywords"
+          value={keywords}
+          onChange={(e) => setKeywords(e.target.value)}
+          placeholder="vegan, dessert, 30-min"
+        />
+        {parsedKeywords.length > 0 ? (
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            {parsedKeywords.map((kw) => (
+              <Badge key={kw} variant="secondary" className="font-normal">
+                {kw}
+              </Badge>
+            ))}
+          </div>
+        ) : null}
+        <p className="text-xs text-muted-foreground">
+          Up to {MAX_KEYWORDS} tags. Readers can browse recipes by tag.
+        </p>
       </div>
 
       <div className="space-y-2">

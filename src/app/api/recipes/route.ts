@@ -2,10 +2,12 @@ import { NextResponse } from "next/server";
 import { parseUnits } from "viem";
 import { getSessionAddress } from "@/lib/session";
 import { createRecipe, listRecipes } from "@/lib/data";
+import { normalizeKeywords } from "@/lib/keywords";
 
-export async function GET() {
+export async function GET(req: Request) {
   const viewer = await getSessionAddress();
-  const recipes = await listRecipes(viewer);
+  const keyword = new URL(req.url).searchParams.get("keyword") ?? undefined;
+  const recipes = await listRecipes(viewer, { keyword });
   return NextResponse.json({ recipes });
 }
 
@@ -19,6 +21,7 @@ export async function POST(req: Request) {
   const title = String(body.title ?? "").trim();
   const content = String(body.body ?? "").trim();
   const teaser = body.teaser ? String(body.teaser).trim().slice(0, 500) : null;
+  const keywords = normalizeKeywords(body.keywords);
 
   if (!title || title.length > 200) {
     return NextResponse.json(
@@ -43,6 +46,7 @@ export async function POST(req: Request) {
     title,
     body: content,
     teaser,
+    keywords,
     priceAtto,
   });
   return NextResponse.json({ id }, { status: 201 });
