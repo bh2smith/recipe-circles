@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { RecipeBody } from "@/components/recipe-body";
 import { useWallet } from "@/components/wallet-provider";
 import { buildErc20Transfer, formatCrc, shortAddress } from "@/lib/circles";
 import { getTokenBalanceAtto } from "@/lib/circles-rpc";
@@ -183,7 +184,7 @@ export function RecipeView({ recipe }: { recipe: RecipeDTO }) {
       </header>
 
       {recipe.body !== null ? (
-        <div className="recipe-body text-[15px]">{recipe.body}</div>
+        <RecipeBody content={recipe.body} />
       ) : (
         <div className="space-y-4">
           {recipe.teaser ? (

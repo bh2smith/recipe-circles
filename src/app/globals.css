@@ -107,8 +107,107 @@
   }
 }
 
-/* Simple readable formatting for recipe bodies (plain text / light markdown). */
+/* Recipe bodies are authored in Markdown; keep the rendered output readable and
+   on-brand (links in indigo, modest headings, no typography plugin needed). */
 .recipe-body {
-  white-space: pre-wrap;
   line-height: 1.7;
+}
+.recipe-body > :first-child {
+  margin-top: 0;
+}
+.recipe-body > :last-child {
+  margin-bottom: 0;
+}
+.recipe-body p {
+  margin: 0.75em 0;
+}
+.recipe-body h1,
+.recipe-body h2,
+.recipe-body h3,
+.recipe-body h4 {
+  margin: 1.4em 0 0.5em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+.recipe-body h1 {
+  font-size: 1.4rem;
+}
+.recipe-body h2 {
+  font-size: 1.2rem;
+}
+.recipe-body h3 {
+  font-size: 1.05rem;
+}
+.recipe-body h4 {
+  font-size: 1rem;
+}
+.recipe-body ul,
+.recipe-body ol {
+  margin: 0.75em 0;
+  padding-left: 1.5rem;
+}
+.recipe-body ul {
+  list-style: disc;
+}
+.recipe-body ol {
+  list-style: decimal;
+}
+.recipe-body li {
+  margin: 0.25em 0;
+}
+.recipe-body a {
+  color: var(--primary);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.recipe-body a:hover {
+  opacity: 0.8;
+}
+.recipe-body strong {
+  font-weight: 600;
+}
+.recipe-body code {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.9em;
+  background: var(--muted);
+  padding: 0.1em 0.35em;
+  border-radius: 0.3rem;
+}
+.recipe-body pre {
+  margin: 0.9em 0;
+  padding: 0.9rem 1rem;
+  background: var(--muted);
+  border-radius: var(--radius);
+  overflow-x: auto;
+}
+.recipe-body pre code {
+  padding: 0;
+  background: none;
+  font-size: 0.85em;
+}
+.recipe-body blockquote {
+  margin: 0.9em 0;
+  padding-left: 1rem;
+  border-left: 3px solid var(--border);
+  color: var(--muted-foreground);
+}
+.recipe-body hr {
+  margin: 1.5em 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+.recipe-body table {
+  display: block;
+  width: 100%;
+  margin: 0.9em 0;
+  border-collapse: collapse;
+  overflow-x: auto;
+}
+.recipe-body th,
+.recipe-body td {
+  padding: 0.4em 0.6em;
+  border: 1px solid var(--border);
+  text-align: left;
 }
