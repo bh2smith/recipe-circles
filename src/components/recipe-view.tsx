@@ -4,14 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2, Lock, Trash2 } from "lucide-react";
+import { ArrowLeft, Loader2, Lock, Pencil, Trash2 } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { RecipeBody } from "@/components/recipe-body";
 import { useWallet } from "@/components/wallet-provider";
@@ -150,20 +150,28 @@ export function RecipeView({ recipe }: { recipe: RecipeDTO }) {
             ) : null}
           </span>
           {recipe.isAuthor ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-destructive hover:text-destructive"
-              onClick={handleDelete}
-              disabled={deleting}
-            >
-              {deleting ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Trash2 className="size-4" />
-              )}
-              Delete
-            </Button>
+            <div className="flex items-center gap-1">
+              <Link
+                href={`/recipe/${recipe.id}/edit`}
+                className={buttonVariants({ variant: "ghost", size: "sm" })}
+              >
+                <Pencil className="size-4" /> Edit
+              </Link>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-destructive hover:text-destructive"
+                onClick={handleDelete}
+                disabled={deleting}
+              >
+                {deleting ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Trash2 className="size-4" />
+                )}
+                Delete
+              </Button>
+            </div>
           ) : null}
         </div>
 
