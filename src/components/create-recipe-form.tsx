@@ -102,6 +102,11 @@ export function CreateRecipeForm() {
           rows={14}
           required
         />
+        <p className="text-xs text-muted-foreground">
+          Markdown supported — write <code>[text](https://…)</code> to link
+          (e.g. to another recipe), or just paste a URL. Lists, headings and{" "}
+          <code>**bold**</code> work too.
+        </p>
       </div>
 
       <div className="space-y-2">
