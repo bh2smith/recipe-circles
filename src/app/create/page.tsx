@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { CreateRecipeForm } from "@/components/create-recipe-form";
+import { RecipeForm } from "@/components/recipe-form";
 
 export default function CreatePage() {
   return (
@@ -17,7 +17,7 @@ export default function CreatePage() {
       <p className="mb-8 text-muted-foreground">
         Post it for everyone, or set a gCRC price to unlock.
       </p>
-      <CreateRecipeForm />
+      <RecipeForm />
     </div>
   );
 }

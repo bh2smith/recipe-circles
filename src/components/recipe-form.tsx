@@ -11,16 +11,22 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useWallet } from "@/components/wallet-provider";
 import { GCRC_CONFIGURED } from "@/lib/config";
+import { attoToCrc } from "@/lib/circles";
 import { MAX_KEYWORDS, normalizeKeywords } from "@/lib/keywords";
+import type { RecipeDTO } from "@/lib/data";
 
-export function CreateRecipeForm() {
+/** Create a new recipe, or edit an existing one when `recipe` is provided. */
+export function RecipeForm({ recipe }: { recipe?: RecipeDTO }) {
+  const editing = !!recipe;
   const router = useRouter();
   const { address, session, ensureSession } = useWallet();
-  const [title, setTitle] = useState("");
-  const [teaser, setTeaser] = useState("");
-  const [body, setBody] = useState("");
-  const [keywords, setKeywords] = useState("");
-  const [price, setPrice] = useState("0");
+  const [title, setTitle] = useState(recipe?.title ?? "");
+  const [teaser, setTeaser] = useState(recipe?.teaser ?? "");
+  const [body, setBody] = useState(recipe?.body ?? "");
+  const [keywords, setKeywords] = useState(recipe?.keywords.join(", ") ?? "");
+  const [price, setPrice] = useState(
+    recipe ? attoToCrc(recipe.priceAtto) : "0",
+  );
   const [submitting, setSubmitting] = useState(false);
 
   const paid = Number(price) > 0;
@@ -42,29 +48,42 @@ export function CreateRecipeForm() {
       }
       const me = session ?? (await ensureSession());
       if (!me) {
-        toast.error("Sign in to post");
+        toast.error("Sign in to continue");
         return;
       }
-      const res = await fetch("/api/recipes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title,
-          teaser,
-          body,
-          keywords: parsedKeywords,
-          price,
-        }),
-      });
+      const res = await fetch(
+        editing ? `/api/recipes/${recipe.id}` : "/api/recipes",
+        {
+          method: editing ? "PATCH" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title,
+            teaser,
+            body,
+            keywords: parsedKeywords,
+            price,
+          }),
+        },
+      );
       if (!res.ok) {
         const e = await res.json().catch(() => ({}));
-        throw new Error(e.error ?? "Could not post recipe");
+        throw new Error(
+          e.error ??
+            (editing ? "Could not save changes" : "Could not post recipe"),
+        );
       }
       const { id } = await res.json();
-      toast.success("Recipe posted!");
+      toast.success(editing ? "Recipe updated!" : "Recipe posted!");
       router.push(`/recipe/${id}`);
+      router.refresh();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Could not post recipe");
+      toast.error(
+        e instanceof Error
+          ? e.message
+          : editing
+            ? "Could not save changes"
+            : "Could not post recipe",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -175,8 +194,11 @@ export function CreateRecipeForm() {
       <Button type="submit" disabled={submitting} className="rounded-full">
         {submitting ? (
           <>
-            <Loader2 className="mr-1 size-4 animate-spin" /> Posting…
+            <Loader2 className="mr-1 size-4 animate-spin" />{" "}
+            {editing ? "Saving…" : "Posting…"}
           </>
+        ) : editing ? (
+          "Save changes"
         ) : (
           "Post recipe"
         )}
