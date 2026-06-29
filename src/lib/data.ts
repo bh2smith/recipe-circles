@@ -204,6 +204,29 @@ export async function deleteRecipe(id: string): Promise<void> {
   await db.delete(recipes).where(eq(recipes.id, id));
 }
 
+export async function updateRecipe(
+  id: string,
+  input: {
+    title: string;
+    body: string;
+    teaser: string | null;
+    keywords: string[];
+    priceAtto: string;
+  },
+): Promise<void> {
+  await db
+    .update(recipes)
+    .set({
+      title: input.title,
+      body: input.body,
+      teaser: input.teaser,
+      keywords: input.keywords,
+      priceAtto: input.priceAtto,
+      updatedAt: new Date(),
+    })
+    .where(eq(recipes.id, id));
+}
+
 export async function createRecipe(input: {
   authorAddress: string;
   title: string;
